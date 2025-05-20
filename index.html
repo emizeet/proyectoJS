@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Codify Clothing</title>
+    <link rel="stylesheet" href="output.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+  <body>
+    <header>
+      <nav
+        class="bg-slate-950 text-white p-4 flex justify-between items-center"
+      >
+        <div class="flex items-center">
+          <h1 class="text-4xl font-bold">Codify.</h1>
+        </div>
+        <div class="flex-1 flex justify-center">
+          <input
+            type="text"
+            placeholder="Buscar..."
+            class="px-3 py-1 rounded-md bg-gray-700 text-white focus:outline-none"
+          />
+        </div>
+        <div class="flex items-center space-x-4">
+          <!-- Botones registro e inicio sesión -->
+          <button
+            class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md"
+            id="registerBtn"
+          >
+            Registrarse
+          </button>
+          <button
+            class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md"
+            id="loginBtn"
+          >
+            Iniciar Sesión
+          </button>
+
+          <!-- Perfil usuario con dropdown (oculto por defecto) -->
+          <div id="userProfile" class="hidden relative">
+            <button
+              id="userMenuBtn"
+              class="text-white font-semibold px-3 py-1 rounded-md hover:bg-gray-700"
+            >
+              <span id="welcomeUser"></span> ▼
+            </button>
+            <div
+              id="userDropdown"
+              class="hidden absolute right-0 mt-2 w-40 bg-white text-black rounded-md shadow-lg z-20"
+            >
+              <button
+                id="accountBtn"
+                class="block w-full text-left px-4 py-2 hover:bg-gray-200"
+              >
+                Cuenta
+              </button>
+              <button
+                id="logoutBtn"
+                class="block w-full text-left px-4 py-2 hover:bg-gray-200"
+              >
+                Salir
+              </button>
+            </div>
+          </div>
+
+          <!-- Ícono carrito personalizado dentro de botón -->
+          <button
+            id="cartBtn"
+            aria-label="Carrito de compras"
+            class="focus:outline-none"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-12 h-12"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+              />
+            </svg>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Modal registro -->
+      <div
+        id="registerModal"
+        class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      >
+        <div class="bg-white rounded-lg p-6 w-96 relative">
+          <button
+            id="closeRegisterModal"
+            class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 font-bold text-xl"
+          >
+            &times;
+          </button>
+          <h2 class="text-2xl font-bold mb-4">Registrarse</h2>
+          <form id="registerForm" class="space-y-4">
+            <div>
+              <label for="registerUsername" class="block font-semibold"
+                >Nombre de usuario</label
+              >
+              <input
+                id="registerUsername"
+                type="text"
+                class="w-full border border-gray-300 rounded px-3 py-2"
+                required
+              />
+              <p
+                id="registerUsernameError"
+                class="text-red-600 text-sm hidden"
+              ></p>
+            </div>
+            <div>
+              <label for="registerPassword" class="block font-semibold"
+                >Contraseña</label
+              >
+              <input
+                id="registerPassword"
+                type="password"
+                class="w-full border border-gray-300 rounded px-3 py-2"
+                required
+              />
+              <p
+                id="registerPasswordError"
+                class="text-red-600 text-sm hidden"
+              ></p>
+            </div>
+            <div>
+              <label for="confirmPassword" class="block font-semibold"
+                >Confirmar Contraseña</label
+              >
+              <input
+                id="confirmPassword"
+                type="password"
+                class="w-full border border-gray-300 rounded px-3 py-2"
+                required
+              />
+              <p
+                id="confirmPasswordError"
+                class="text-red-600 text-sm hidden"
+              ></p>
+            </div>
+            <div>
+              <label for="fullName" class="block font-semibold"
+                >Nombre completo:</label
+              >
+              <input
+                type="text"
+                id="fullName"
+                name="fullName"
+                required
+                class="w-full border border-gray-300 rounded px-3 py-2"
+              />
+              <p id="fullNameError" class="text-red-600 text-sm hidden"></p>
+            </div>
+            <div>
+              <label class="block font-semibold">Sexo:</label>
+              <div class="flex space-x-4">
+                <label
+                  ><input type="radio" name="sex" value="Masculino" />
+                  Masculino</label
+                >
+                <label
+                  ><input type="radio" name="sex" value="Femenino" />
+                  Femenino</label
+                >
+                <label
+                  ><input type="radio" name="sex" value="Otro" /> Otro</label
+                >
+              </div>
+              <p id="sexError" class="text-red-600 text-sm hidden"></p>
+            </div>
+            <div>
+              <label for="location" class="block font-semibold"
+                >Ubicación geográfica (país):</label
+              >
+              <input
+                type="text"
+                id="location"
+                name="location"
+                required
+                class="w-full border border-gray-300 rounded px-3 py-2"
+                list="countriesList"
+              />
+              <datalist id="countriesList">
+                <option value="Argentina"></option>
+                <option value="Brasil"></option>
+                <option value="Chile"></option>
+                <option value="México"></option>
+                <option value="Uruguay"></option>
+                <option value="Colombia"></option>
+                <option value="Perú"></option>
+                <option value="Paraguay"></option>
+                <option value="Ecuador"></option>
+                <option value="Bolivia"></option>
+                <option value="Venezuela"></option>
+                <option value="Estados Unidos"></option>
+                <option value="Canadá"></option>
+                <option value="España"></option>
+                <option value="Francia"></option>
+                <option value="Alemania"></option>
+                <option value="Italia"></option>
+                <option value="Portugal"></option>
+              </datalist>
+              <p id="locationError" class="text-red-600 text-sm hidden"></p>
+            </div>
+            <button
+              type="submit"
+              class="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded font-semibold"
+            >
+              Registrarse
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal login -->
+      <div
+        id="loginModal"
+        class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      >
+        <div class="bg-white rounded-lg p-6 w-96 relative">
+          <button
+            id="closeLoginModal"
+            class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 font-bold text-xl"
+          >
+            &times;
+          </button>
+          <h2 class="text-2xl font-bold mb-4">Iniciar Sesión</h2>
+          <form id="loginForm" class="space-y-4">
+            <div>
+              <label for="username" class="block font-semibold"
+                >Nombre de usuario</label
+              >
+              <input
+                id="username"
+                type="text"
+                class="w-full border border-gray-300 rounded px-3 py-2"
+                required
+              />
+              <p id="usernameError" class="text-red-600 text-sm hidden"></p>
+            </div>
+            <div>
+              <label for="password" class="block font-semibold"
+                >Contraseña</label
+              >
+              <input
+                id="password"
+                type="password"
+                class="w-full border border-gray-300 rounded px-3 py-2"
+                required
+                bash
+                Copiar
+                Editar
+              />
+              <p id="passwordError" class="text-red-600 text-sm hidden"></p>
+            </div>
+            <button
+              type="submit"
+              class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded font-semibold"
+            >
+              Iniciar Sesión
+            </button>
+          </form>
+        </div>
+      </div>
+    </header>
+    <aside></aside>
+    <main>
+      <section
+        class="max-w-7xl mx-auto p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+      >
+        <!-- Card 1 -->
+        <div
+          class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"
+        >
+          <img
+            src="./assets/remera.jpeg"
+            alt="Producto 1"
+            class="w-full h-48 object-contain"
+          />
+          <div class="p-4 flex flex-col flex-grow">
+            <h3 class="text-lg font-semibold mb-2">Camiseta</h3>
+            <p class="text-gray-600 flex-grow">
+              Una camiseta clásica disponible en varios colores, imprescindible
+              en cualquier guardarropa.
+            </p>
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-xl font-bold">$19.99</span>
+              <button
+                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+              >
+                Agregar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div
+          class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"
+        >
+          <img
+            src="./assets/campera.jpeg"
+            alt="Producto 2"
+            class="w-full h-48 object-contain"
+          />
+          <div class="p-4 flex flex-col flex-grow">
+            <h3 class="text-lg font-semibold mb-2">
+              Campera Negra con Corderito
+            </h3>
+            <p class="text-gray-600 flex-grow">
+              Abrigada y con estilo, esta campera negra cuenta con forro de
+              corderito para brindar máxima calidez.
+            </p>
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-xl font-bold text-blue-600">$29.99</span>
+              <button
+                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+              >
+                Agregar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div
+          class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"
+        >
+          <img
+            src="./assets/gorra.jpeg"
+            alt="Producto 3"
+            class="w-full h-48 object-contain"
+          />
+          <div class="p-4 flex flex-col flex-grow">
+            <h3 class="text-lg font-semibold mb-2">Gorra Gris Casual</h3>
+            <p class="text-gray-600 flex-grow">
+              Esta gorra gris es el complemento perfecto para un look urbano y
+              relajado.
+            </p>
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-xl font-bold text-blue-600">$9.99</span>
+              <button
+                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+              >
+                Agregar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div
+          class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"
+        >
+          <img
+            src="./assets/riñonera.jpeg"
+            alt="Producto 4"
+            class="w-full h-48 object-contain"
+          />
+          <div class="p-4 flex flex-col flex-grow">
+            <h3 class="text-lg font-semibold mb-2">Riñonera Negra</h3>
+            <p class="text-gray-600 flex-grow">
+              Práctica y moderna, esta riñonera negra cuenta con varios
+              compartimentos para llevar lo esencial.
+            </p>
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-xl font-bold text-blue-600">$14.99</span>
+              <button
+                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+              >
+                Agregar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div
+          class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"
+        >
+          <img
+            src="./assets/lompa.jpeg"
+            alt="Producto 5"
+            class="w-full h-48 object-contain"
+          />
+          <div class="p-4 flex flex-col flex-grow">
+            <h3 class="text-lg font-semibold mb-2">Pantalón Blanco Casual</h3>
+            <p class="text-gray-600 flex-grow">
+              Un pantalón blanco versátil y cómodo, ideal para ocasiones
+              informales.
+            </p>
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-xl font-bold text-blue-600">$24.99</span>
+              <button
+                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+              >
+                Agregar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div
+          class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"
+        >
+          <img
+            src="./assets/botas.jpeg"
+            alt="Producto 6"
+            class="w-full h-48 object-contain"
+          />
+          <div class="p-4 flex flex-col flex-grow">
+            <h3 class="text-lg font-semibold mb-2">Botas Marrones de Cuero</h3>
+            <p class="text-gray-600 flex-grow">
+              Clásicas y resistentes, estas botas marrones están hechas de cuero
+              genuino.
+            </p>
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-xl font-bold text-blue-600">$39.99</span>
+              <button
+                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+              >
+                Agregar
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer></footer>
+    <div id="message" class="hidden"></div>
+    <script src="script.js"></script>
+  </body>
+</html>
