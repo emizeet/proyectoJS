@@ -96,7 +96,7 @@ closeLoginModalBtn.addEventListener("click", () => {
   loginForm.reset();
 });
 
-closeRegisterModalgiBtn.addEventListener("click", () => {
+closeRegisterModalBtn.addEventListener("click", () => {
   registerModal.classList.add("hidden");
   clearRegisterErrors();
   registerForm.reset();
