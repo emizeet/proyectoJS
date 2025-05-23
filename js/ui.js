@@ -1,11 +1,11 @@
 import { getCart, clearCart, removeFromCart } from "./cart.js";
-
-// Referencias que se usan para actualizar la UI al loguear/desloguear
-const loginBtn = document.getElementById("loginBtn");
-const registerBtn = document.getElementById("registerBtn");
-const userProfileDiv = document.getElementById("userProfile");
-const welcomeUserSpan = document.getElementById("welcomeUser");
-const userDropdown = document.getElementById("userDropdown");
+import {
+  loginBtn,
+  registerBtn,
+  userProfileDiv,
+  welcomeUserSpan,
+  userDropdown,
+} from "./dom.js";
 
 export function updateUserProfileUI() {
   const username = localStorage.getItem("username");
@@ -25,7 +25,7 @@ export function resetUIOnLogout() {
   userDropdown.classList.add("hidden");
 }
 
-// carrito
+// Carrito
 
 export function setupCartCloseButton() {
   const closeBtn = document.getElementById("closeCartBtn");
@@ -40,43 +40,60 @@ export function renderCart() {
   const cartContainer = document.getElementById("cartContainer");
   const cartItems = document.getElementById("cartItems");
   const cartTotal = document.getElementById("cartTotal");
-  const cart = getCart();
-  // Mostrar el contenedor
-  cartContainer.classList.remove("hidden");
+  let cart = getCart();
 
-  // Limpiar lista actual
+  cartContainer.classList.remove("hidden");
   cartItems.innerHTML = "";
 
-  // Variable para sumar el total
   let total = 0;
 
-  // Recorrer carrito y crear elementos li
   cart.forEach((product, index) => {
-    total += product.price;
+    const subtotal = product.price * product.quantity;
+    total += subtotal;
 
     const li = document.createElement("li");
-    li.className = "py-2 flex justify-between items-center";
+    li.className = "py-2 flex justify-between items-center gap-2";
 
     li.innerHTML = `
-      <span>${product.name} - $${product.price.toFixed(2)}</span>
+      <div class="flex items-center gap-3 flex-1">
+        <img src="${product.image || "ruta/a/imagen-default.jpg"}" alt="${
+      product.name
+    }" class="w-12 h-12 object-cover rounded" />
+        <span>${product.name} - $${product.price.toFixed(2)}</span>
+      </div>
+      <input type="number" min="1" value="${
+        product.quantity
+      }" data-index="${index}" class="quantity-input w-16 text-center border rounded" />
+      <span class="w-20 text-right">$${subtotal.toFixed(2)}</span>
       <button class="remove-btn text-red-600 hover:text-red-800" data-index="${index}" aria-label="Eliminar ${
       product.name
-    } del carrito">X</button>
+    }">X</button>
     `;
 
     cartItems.appendChild(li);
   });
 
-  // Mostrar total
   cartTotal.textContent = `$${total.toFixed(2)}`;
 
-  // Agregar event listeners para botones de eliminar
-  const removeButtons = cartItems.querySelectorAll(".remove-btn");
-
-  removeButtons.forEach((btn) =>
+  // Botones para eliminar
+  cartItems.querySelectorAll(".remove-btn").forEach((btn) =>
     btn.addEventListener("click", (e) => {
       const idx = parseInt(e.target.dataset.index);
       removeFromCart(idx);
+      renderCart();
+    })
+  );
+
+  // Inputs para cambiar cantidad
+  cartItems.querySelectorAll(".quantity-input").forEach((input) =>
+    input.addEventListener("change", (e) => {
+      const idx = parseInt(e.target.dataset.index);
+      let newQuantity = parseInt(e.target.value);
+
+      if (isNaN(newQuantity) || newQuantity < 1) newQuantity = 1;
+
+      cart[idx].quantity = newQuantity;
+      localStorage.setItem("cart", JSON.stringify(cart));
       renderCart();
     })
   );
@@ -98,10 +115,10 @@ export function confirmPurchase() {
     icon: "success",
     title: "¡Compra realizada!",
     text: "Gracias por tu compra.",
-    confirmButtonColor: "#22c55e", // Verde
+    confirmButtonColor: "#22c55e",
   }).then(() => {
-    clearCart(); // Vaciar carrito
+    clearCart();
     document.getElementById("cartContainer").classList.add("hidden");
-    renderCart(); // Volver a renderizar (vacío)
+    renderCart();
   });
 }

@@ -41,3 +41,7 @@ export const userDropdown = document.getElementById("userDropdown");
 export const accountBtn = document.getElementById("accountBtn");
 export const logoutBtn = document.getElementById("logoutBtn");
 export const welcomeUserSpan = document.getElementById("welcomeUser");
+export const productsContainer = document.getElementById("productsContainer");
+export const cartBtn = document.getElementById("cartBtn");
+export const checkoutBtn = document.getElementById("checkoutBtn");
+export const closeCartBtn = document.getElementById("closeCartBtn");

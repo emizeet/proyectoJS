@@ -31,12 +31,13 @@ import {
   accountBtn,
   logoutBtn,
   welcomeUserSpan,
+  productsContainer,
 } from "./dom.js";
 
 import { validatePassword } from "./validation.js";
-import { addToCart } from "./cart.js";
-import { setupCartCloseButton, renderCart } from "./ui.js";
-import { confirmPurchase } from "./ui.js";
+import { addToCart, updateCartCount } from "./cart.js";
+import { setupCartCloseButton, renderCart, confirmPurchase } from "./ui.js";
+import { products } from "./products.js";
 
 // Validación países (para validar ubicación)
 const validCountries = [
@@ -276,10 +277,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const id = button.dataset.id;
       const name = button.dataset.name;
       const price = parseFloat(button.dataset.price);
-      const product = { id, name, price };
+      const image = button.dataset.image; // <-- nuevo
+      const product = { id, name, price, image }; // <-- incluí image
       addToCart(product);
-      const checkoutBtn = document.getElementById("checkoutBtn");
-      checkoutBtn.addEventListener("click", confirmPurchase);
       renderCart();
     });
   });
@@ -290,4 +290,61 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Botón para cerrar carrito
   setupCartCloseButton();
+
+  // Botón para finalizar compra (requiere login)
+  const checkoutBtn = document.getElementById("checkoutBtn");
+  checkoutBtn.addEventListener("click", () => {
+    const username = localStorage.getItem("username");
+    if (!username) {
+      Swal.fire({
+        icon: "warning",
+        title: "Debes iniciar sesión",
+        text: "Por favor, inicia sesión para finalizar la compra.",
+      });
+      return;
+    }
+
+    confirmPurchase();
+  });
 });
+
+// Renderizado de productos
+
+function renderProducts() {
+  productsContainer.innerHTML = ""; // Limpiar antes de renderizar
+  products.forEach((product) => {
+    const card = document.createElement("div");
+    card.className =
+      "bg-white rounded-lg shadow-md overflow-hidden flex flex-col";
+
+    card.innerHTML = `
+      <img src="${product.image}" alt="${
+      product.name
+    }" class="w-full h-48 object-contain" />
+      <div class="p-4 flex flex-col flex-grow">
+        <h3 class="text-lg font-semibold mb-2">${product.name}</h3>
+        <p class="text-gray-600 flex-grow">${product.description}</p>
+        <div class="mt-4 flex items-center justify-between">
+          <span class="text-xl font-bold text-blue-600">$${product.price.toFixed(
+            2
+          )}</span>
+          <button
+            class="add-to-cart-btn bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+            aria-label="Agregar ${product.name} al carrito"
+            data-id="${product.id}"
+            data-name="${product.name}"
+            data-price="${product.price}"
+            data-image="${product.image}"  <!-- agregado aquí -->
+          >
+            Agregar
+          </button>
+        </div>
+      </div>
+    `;
+
+    productsContainer.appendChild(card);
+    updateCartCount();
+  });
+}
+
+renderProducts();

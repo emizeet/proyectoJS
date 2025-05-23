@@ -9,11 +9,22 @@ export function saveCart() {
 }
 
 export function updateCartCount() {
-  // Acá podés agregar lógica de contador visual si querés más adelante
+  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+  const cartCountElement = document.getElementById("cartCount");
+  if (cartCountElement) {
+    cartCountElement.textContent = cartCount;
+  }
 }
 
 export function addToCart(product) {
-  cart.push(product);
+  const existingProduct = cart.find((item) => item.id === product.id);
+
+  if (existingProduct) {
+    existingProduct.quantity += 1;
+  } else {
+    cart.push({ ...product, quantity: 1 });
+  }
+
   saveCart();
   updateCartCount();
   console.log(`Agregado al carrito: ${product.name} - $${product.price}`);
