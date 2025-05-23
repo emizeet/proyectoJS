@@ -280,7 +280,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const image = button.dataset.image; // <-- nuevo
       const product = { id, name, price, image }; // <-- incluí image
       addToCart(product);
-      renderCart();
     });
   });
 
