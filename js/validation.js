@@ -44,5 +44,5 @@ export function validatePassword(password) {
     return "La contraseña debe contener al menos un carácter especial.";
   }
 
-  return ""; // sin errores
+  return "";
 }

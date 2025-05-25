@@ -310,7 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // Renderizado de productos
 
 function renderProducts() {
-  productsContainer.innerHTML = ""; // Limpiar antes de renderizar
+  productsContainer.innerHTML = "";
   products.forEach((product) => {
     const card = document.createElement("div");
     card.className =
